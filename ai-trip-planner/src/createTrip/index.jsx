@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
-import { SelectBudgetOptions, SelectTravelsList } from '../constants/options';
+import { AI_PROMPT, SelectBudgetOptions, SelectTravelsList } from '../constants/options';
+import { chatSession } from '../service/AIMODAL';
+
+
 
 
 function CreateTrip() {
@@ -9,6 +12,12 @@ function CreateTrip() {
     const [formData,setFormData] = useState([])
 
     const handleInputChange = (name,value)=>{
+
+        if(name=='noOfDays'&& value>5){
+            console.log('Please enter a number less than 5')
+            return;
+        }
+
          setFormData({
             ...formData,
             [name]: value
@@ -19,6 +28,25 @@ function CreateTrip() {
         console.log(formData)
     },[formData])
 
+    const OnGenerateTrip= async()=>{
+        if(formData?.noOfDays>5 && (!formData?.location || !formData?.budget || !formData?.traveller)){
+            
+        
+            return;
+        }
+
+        const FINAL_PROMPT = AI_PROMPT
+        .replace('{location}',formData?.location)
+        .replace('{totalDays}',formData?.noOfDays)
+        .replace('{traveller}',formData?.traveller)
+        .replace('{budget}',formData?.budget)
+
+        console.log(FINAL_PROMPT);
+
+        const result = await chatSession.sendMessage(FINAL_PROMPT)
+        console.log(result?.response?.text());
+    }
+
     return (
         
         <div className='sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 pt-10'>
@@ -28,7 +56,7 @@ function CreateTrip() {
             <div className='mt-20 flex flex-col gap-9'>
                 <div >
                     <h2 className='text-xl my-3 font-medium'>What is destination of your choice?</h2>
-                    <GooglePlacesAutocomplete
+                    {/* <GooglePlacesAutocomplete
                         apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
                         selectProps={{
                             place,
@@ -37,6 +65,17 @@ function CreateTrip() {
                                 handleInputChange('location',v)
                             }
                         }}
+                    /> */}
+
+                    <input type='text' className='border-2 border-gray-200 rounded-lg w-full p-2' placeholder='Ex. Paris'
+                    
+                       
+                        onChange={(e) => { 
+                        
+                            setPlace(e);
+                            handleInputChange('location',e.target.value);
+                        }
+                    }
                     />
                 </div>
 
@@ -89,7 +128,8 @@ function CreateTrip() {
             </div>
 
             <div className='my-10 justify-end flex'>
-            <button className='mt-10 bg-black text-white px-5 py-2 rounded-lg w-30'>Generate Trip</button>
+            
+            <button onClick={OnGenerateTrip} className='mt-10 bg-black text-white px-5 py-2 rounded-lg w-30'>Generate Trip</button>
             </div>
 
         </div>
