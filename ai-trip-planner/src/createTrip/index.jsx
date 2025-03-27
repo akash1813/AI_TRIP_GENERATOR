@@ -13,6 +13,9 @@ import {
 
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../service/firebaseConfig';
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 
 
@@ -22,6 +25,7 @@ function CreateTrip() {
 
     const [formData, setFormData] = useState([])
     const [open, setOpen] = React.useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleOpen = () => setOpen(!open);
     const handleInputChange = (name, value) => {
@@ -44,7 +48,7 @@ function CreateTrip() {
 
     const login = useGoogleLogin({
         onSuccess: (codeResp) => GetUserProfile(codeResp),
-        onError:(error)=>console.log(error)
+        onError: (error) => console.log(error)
     })
 
     const OnGenerateTrip = async () => {
@@ -58,10 +62,10 @@ function CreateTrip() {
 
 
         if (formData?.noOfDays > 5 && (!formData?.location || !formData?.budget || !formData?.traveller)) {
-
-
             return;
         }
+
+        setLoading(true);
 
         const FINAL_PROMPT = AI_PROMPT
             .replace('{location}', formData?.location)
@@ -69,27 +73,44 @@ function CreateTrip() {
             .replace('{traveller}', formData?.traveller)
             .replace('{budget}', formData?.budget)
 
-        console.log(FINAL_PROMPT);
+
 
         const result = await chatSession.sendMessage(FINAL_PROMPT)
         console.log(result?.response?.text());
+        setLoading(false);
+        SaveAiTrip(result?.response?.text());
     }
 
-    const GetUserProfile = (tokenInfo)=>{
+    const GetUserProfile = (tokenInfo) => {
 
-        axios.get(`https://www.googleapis.com/oauth2/v1/userinfo? access_token=${tokenInfo?.access_token}`,{
-            headers:{
+        axios.get(`https://www.googleapis.com/oauth2/v1/userinfo? access_token=${tokenInfo?.access_token}`, {
+            headers: {
                 Authorization: `Bearer ${tokenInfo?.access_token}`,
-                Accept:'Application/json'
+                Accept: 'Application/json'
             }
-        }).then((res)=>{
+        }).then((res) => {
             localStorage.setItem('user', JSON.stringify(res.data))
             setOpen(false)
             OnGenerateTrip();
-            
+
         })
 
-        
+
+    }
+
+    const SaveAiTrip = async (TripData) => {
+        setLoading(true);
+
+        const user = JSON.parse(localStorage.getItem('user'));
+        const docId = Date.now().toString();
+        await setDoc(doc(db, "AITrips", docId), {
+            userSelection: formData,
+            tripData: JSON.parse(TripData),
+            userEmail: user?.email,
+            id: docId,
+        })
+
+        setLoading(false);
     }
 
     return (
@@ -174,27 +195,37 @@ function CreateTrip() {
 
             <div className='my-10 justify-end flex'>
 
-                <button onClick={OnGenerateTrip} className='mt-10 bg-black text-white px-5 py-2 rounded-lg w-30'>Generate Trip</button>
+                <button disabled={loading} onClick={OnGenerateTrip} className='mt-10 bg-black text-white px-5 py-2 rounded-lg w-30'>
+                    {loading ?
 
-                
+                        <AiOutlineLoading3Quarters className='h-7 w-7 animate-spin' />
+                        :
+                        'Generate Trip'
+
+                    }
+                </button>
+
+
                 <Dialog open={open} handler={handleOpen}>
                     {/* <DialogHeader>Its a simple dialog.</DialogHeader> */}
                     <DialogBody>
                         <div className='flex flex-col items-center justify-center'>
-                        <img className='w-10 h-10' src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png" />
-                        <h2 className='text-xl text-black flex justify-center font-semibold'>Sign In with Google</h2>
+                            <img className='w-10 h-10' src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png" />
+                            <h2 className='text-xl text-black flex justify-center font-semibold'>Sign In with Google</h2>
                         </div>
                         <p className='justify-center flex text-lg font-semibold'>Sign in to app with Google authentication</p>
-                        
+
                     </DialogBody>
-        
+
 
                     <Button onClick={login} variant="gradient" color="black" className=' mx-40 items-center px-20 flex flex-row font-bold mb-2' >
-                      
-                    <FcGoogle className='h-6 w-7 mx-2'  />
-                    SignIn 
-                        
-                      
+
+
+
+                        <FcGoogle className='h-6 w-7 mx-2' />
+                        SignIn
+
+
                     </Button>
 
                 </Dialog>
