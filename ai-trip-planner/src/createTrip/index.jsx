@@ -16,6 +16,7 @@ import axios from 'axios';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../service/firebaseConfig';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -26,6 +27,8 @@ function CreateTrip() {
     const [formData, setFormData] = useState([])
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleOpen = () => setOpen(!open);
     const handleInputChange = (name, value) => {
@@ -72,6 +75,8 @@ function CreateTrip() {
             .replace('{totalDays}', formData?.noOfDays)
             .replace('{traveller}', formData?.traveller)
             .replace('{budget}', formData?.budget)
+            .replace('{totalDays}', formData?.noOfDays)
+            
 
 
 
@@ -111,6 +116,7 @@ function CreateTrip() {
         })
 
         setLoading(false);
+        navigate('/view-trip/'+docId);
     }
 
     return (
