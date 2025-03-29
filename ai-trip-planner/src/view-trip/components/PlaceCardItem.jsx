@@ -17,7 +17,7 @@ function PlaceCardItem({place}) {
                 textQuery: place?.placeName,
                 
             }
-            const result = await getPlaceDetails().then(resp=>{
+            const result = await getPlaceDetails(data).then(resp=>{
                 
     
                 const PhotoUrl =  PHOTO_REF_URL.replace('{NAME}',resp.data.places[0].photos[3].name)
