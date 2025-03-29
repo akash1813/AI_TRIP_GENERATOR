@@ -21,7 +21,7 @@ function PlacesToVisit({ trip }) {
                 <div className='grid md:grid-cols-2 gap-5 mt-4'>
                   {day.activities.map((activity, activityIndex) => (
                      
-                     <div key={activityIndex} className=''>
+                     <div key={activityIndex} >
                          
                           <PlaceCardItem place={activity} />
                         </div>
