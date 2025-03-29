@@ -4,7 +4,7 @@ import PlaceCardItem from './PlaceCardItem';
 function PlacesToVisit({ trip }) {
   return (
     <div>
-      <h1 className='font-bold text-lg mt-5'>Places to Visit</h1>
+      <h1 className='font-bold text-xl mt-5'>Places to Visit</h1>
 
       <div className='mt-5'>
         {trip?.tripData?.itinerary &&
