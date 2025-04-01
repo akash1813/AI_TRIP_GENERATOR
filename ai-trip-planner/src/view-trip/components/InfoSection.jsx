@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from "@material-tailwind/react";
 import { FaShareAlt } from "react-icons/fa";
-import { getPlaceDetails, PHOTO_REF_URL } from '../../service/GlobalApi';
+import { getPlaceDetails ,PHOTO_REF_URL} from '../../service/GlobalApi';
 
 
 function InfoSection({ trip }) {
@@ -18,16 +18,19 @@ function InfoSection({ trip }) {
             
         }
         const result = await getPlaceDetails(data).then(resp=>{
-            console.log(resp.data.places[0].photos[3].name)
+            
+
+            // console.log(resp.data.places[0].photos[3].name)
 
             const PhotoUrl =  PHOTO_REF_URL.replace('{NAME}',resp.data.places[0].photos[3].name)
+            // console.log(PhotoUrl);
             setPhotoUrl(PhotoUrl)
             
         })
     }
     return (
         <div>
-            <img src={photoUrl?photoUrl : "/placeholder.jpg"} className='h-[340px] w-full  object-cover rounded-xl' />
+            <img src={photoUrl?photoUrl:"/placeholder.jpg"} alt="place" className='h-[340px] w-full  object-cover rounded-xl' />
 
             <div className='flex justify-between items-center'>
                 <div className='my-5 flex flex-col gap-2'>

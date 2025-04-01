@@ -11,17 +11,20 @@ function HotelCardItem({hotel,trip}) {
         },[hotel])
     
         const GetPlacePhoto = async()=>{
-            const data  = {
-                textQuery: hotel?.hotelName,
-                
+            try {
+                const data = {
+                    textQuery: `${hotel?.hotelName} ${hotel?.hotelAddress}`
+                }
+                const response = await getPlaceDetails(data)
+                if (response.data.places && response.data.places[0]?.photos?.length > 0) {
+                    const photoName = response.data.places[0].photos[0].name
+                    const photoUrl = PHOTO_REF_URL.replace('{NAME}', photoName)
+                    setPhotoUrl(photoUrl)
+                }
+            } catch (error) {
+                console.error('Error fetching hotel photo:', error)
+                setPhotoUrl('/placeholder.jpg')
             }
-            const result = await getPlaceDetails(data).then(resp=>{
-                console.log(resp.data.places[0].photos[3].name)
-    
-                const PhotoUrl =  PHOTO_REF_URL.replace('{NAME}',resp.data.places[0].photos[3].name)
-                setPhotoUrl(PhotoUrl)
-                
-            })
         }
 
   return (

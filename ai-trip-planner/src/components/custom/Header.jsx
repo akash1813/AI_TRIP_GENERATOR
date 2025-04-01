@@ -12,11 +12,15 @@ import {
 import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from "react-icons/fc";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 
 function Header() {
      const [open, setOpen] = useState(false);
      const handleOpen = () => setOpen(!open);
+    
+    const navigate = useNavigate();
 
     const user = JSON.parse(localStorage.getItem('user'));
    
@@ -46,7 +50,7 @@ function Header() {
 
     }
 
-
+    
     return (
         <div className='p-3 shadow-sm flex justify-between items-center bg-gray-700'>
             <div className='flex items-center gap-3'>
@@ -74,7 +78,9 @@ function Header() {
                                 <h2 className='cursor-pointer text-black' onClick={()=>{
                                     googleLogout();
                                     localStorage.clear();
-                                   window.location.reload();
+                                    navigate("/")
+                                //    window.location.reload();
+                                    
 
                                 }}>Logout</h2>
                             </PopoverContent>
