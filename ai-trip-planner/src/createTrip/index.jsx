@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 import { AI_PROMPT, SelectBudgetOptions, SelectTravelsList } from '../constants/options';
-import { chatSession } from '../service/AIMODAL';
+import { chatSession } from '../service/aimodal';
 import { FcGoogle } from "react-icons/fc";
 import {
     Button,
