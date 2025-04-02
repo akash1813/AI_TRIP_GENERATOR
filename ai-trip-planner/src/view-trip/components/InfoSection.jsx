@@ -17,7 +17,7 @@ function InfoSection({ trip }) {
             textQuery: trip?.tripData?.location,
             
         }
-        const result = await getPlaceDetails(data).then(resp=>{
+        await getPlaceDetails(data).then(resp=>{
             
 
             // console.log(resp.data.places[0].photos[3].name)

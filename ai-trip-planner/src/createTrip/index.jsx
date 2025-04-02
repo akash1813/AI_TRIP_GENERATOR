@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 function CreateTrip() {
-    const [place, setPlace] = useState()
+    // const [place, setPlace] = useState()
 
     const [formData, setFormData] = useState([])
     const [open, setOpen] = React.useState(false);
@@ -144,7 +144,7 @@ function CreateTrip() {
 
                         onChange={(e) => {
 
-                            setPlace(e);
+                            // setPlace(e);
                             handleInputChange('location', e.target.value);
                         }
                         }

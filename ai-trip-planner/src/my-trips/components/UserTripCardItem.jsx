@@ -15,7 +15,7 @@ function UserTripCardItem({trip}) {
                 textQuery: trip?.tripData?.location,
                 
             }
-            const result = await getPlaceDetails(data).then(resp=>{
+            await getPlaceDetails(data).then(resp=>{
                 console.log(resp.data.places[0].photos[3].name)
     
                 const PhotoUrl =  PHOTO_REF_URL.replace('{NAME}',resp.data.places[0].photos[3].name)
